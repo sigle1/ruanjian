@@ -10,27 +10,32 @@ from .config import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL
 
 
 class DeepSeekClient:
+    def __init__(self, api_key: str = DEEPSEEK_API_KEY, base_url: str = DEEPSEEK_BASE_URL, model: str = DEEPSEEK_MODEL) -> None:
+        self.api_key = api_key.strip()
+        self.base_url = base_url.rstrip("/")
+        self.model = model
+
     def configured(self) -> bool:
-        return bool(DEEPSEEK_API_KEY.strip())
+        return bool(self.api_key)
 
     def ask(self, prompt: str) -> str:
         if not self.configured():
             raise RuntimeError("请先在 app/config.py 中填写 DEEPSEEK_API_KEY。")
         payload = json.dumps({
-            "model": DEEPSEEK_MODEL,
+            "model": self.model,
             "temperature": 0.2,
             "messages": [
                 {"role": "system", "content": "你是一名严谨的 Python 代码审查助手。请用中文给出具体、可执行的建议。"},
                 {"role": "user", "content": prompt},
             ],
         }).encode("utf-8")
-        endpoint = f"{DEEPSEEK_BASE_URL.rstrip('/')}/chat/completions"
+        endpoint = f"{self.base_url}/chat/completions"
         last_error: Exception | None = None
         for attempt in range(3):
             req = request.Request(
                 endpoint,
                 data=payload,
-                headers={"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"},
+                headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
                 method="POST",
             )
             try:

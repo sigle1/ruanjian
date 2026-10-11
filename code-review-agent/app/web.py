@@ -8,6 +8,8 @@ from pathlib import Path
 from urllib.parse import parse_qs
 
 from .agent import CodeReviewAgent
+from .llm import DeepSeekClient
+from .settings import DeepSeekSettings, SettingsStore
 from .config import DEEPSEEK_API_KEY, DEEPSEEK_MODEL
 
 
@@ -61,4 +63,6 @@ def _status() -> str:
 
 
 if __name__ == "__main__":
-    main()
+    from .configurable_web import main as configurable_main
+
+    configurable_main()

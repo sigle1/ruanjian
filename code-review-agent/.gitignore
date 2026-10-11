@@ -1,3 +1,4 @@
 app/config.py
+.agent_settings.json
 __pycache__/
 *.pyc
